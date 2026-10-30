@@ -41,7 +41,7 @@ public class CoreExceptionResolver extends DataFetcherExceptionResolverAdapter {
 
     private static ErrorType errorType(int status) {
         return switch (status) {
-            case 400 -> ErrorType.BAD_REQUEST;
+            case 400, 409 -> ErrorType.BAD_REQUEST;
             case 401 -> ErrorType.UNAUTHORIZED;
             case 403 -> ErrorType.FORBIDDEN;
             case 404 -> ErrorType.NOT_FOUND;
