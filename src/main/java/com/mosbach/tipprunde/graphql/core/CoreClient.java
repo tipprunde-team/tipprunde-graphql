@@ -12,6 +12,10 @@ import java.util.Map;
 import com.mosbach.tipprunde.graphql.model.Group;
 import com.mosbach.tipprunde.graphql.model.GroupSummary;
 import com.mosbach.tipprunde.graphql.model.InvitePreview;
+import com.mosbach.tipprunde.graphql.model.Matchday;
+import com.mosbach.tipprunde.graphql.model.RankingEntry;
+import com.mosbach.tipprunde.graphql.model.RankingResponse;
+import com.mosbach.tipprunde.graphql.model.Tip;
 import com.mosbach.tipprunde.graphql.model.TokenAnswer;
 import com.mosbach.tipprunde.graphql.model.User;
 
@@ -46,6 +50,29 @@ public class CoreClient {
         return handle(webClient.get().uri("/api/invites/{code}", code).retrieve(), InvitePreview.class).next();
     }
 
+    // Ohne matchday liefert der Core den aktuellen Spieltag
+    public Mono<Matchday> matchday(String authorization, long groupId, Integer matchday) {
+        return handle(webClient.get().uri(uriBuilder -> {
+            uriBuilder.path("/api/groups/{groupId}/matches");
+            if (matchday != null) {
+                uriBuilder.queryParam("matchday", matchday);
+            }
+            return uriBuilder.build(groupId);
+        }).headers(h -> authorize(h, authorization)).retrieve(), Matchday.class).next();
+    }
+
+    // Ohne matchday liefert der Core die Gesamtrangliste
+    public Mono<List<RankingEntry>> ranking(String authorization, long groupId, Integer matchday) {
+        return handle(webClient.get().uri(uriBuilder -> {
+            uriBuilder.path("/api/groups/{groupId}/ranking");
+            if (matchday != null) {
+                uriBuilder.queryParam("matchday", matchday);
+            }
+            return uriBuilder.build(groupId);
+        }).headers(h -> authorize(h, authorization)).retrieve(), RankingResponse.class).next()
+                .map(RankingResponse::ranking);
+    }
+
     // Registrierung und Login brauchen kein Token
     public Mono<User> register(String email, String username, String password) {
         return send(webClient.post().uri("/api/users"), null,
@@ -64,6 +91,11 @@ public class CoreClient {
     public Mono<GroupSummary> joinGroup(String authorization, String inviteCode) {
         return send(webClient.post().uri("/api/groups/join"), authorization, Map.of("inviteCode", inviteCode),
                 GroupSummary.class);
+    }
+
+    public Mono<Tip> submitTip(String authorization, long groupId, long matchId, int home, int away) {
+        return send(webClient.put().uri("/api/groups/{groupId}/matches/{matchId}/tip", groupId, matchId), authorization,
+                Map.of("home", home, "away", away), Tip.class);
     }
 
     private <T> Mono<T> send(WebClient.RequestBodySpec spec, String authorization, Object body, Class<T> type) {

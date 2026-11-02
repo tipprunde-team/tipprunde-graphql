@@ -2,6 +2,7 @@ package com.mosbach.tipprunde.graphql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -95,5 +96,69 @@ class MutationsTest extends AbstractGraphqlTest {
         var result = graphql.post("mutation { joinGroup(inviteCode: \"k7Qp2xZ9aB\") { id } }", BEARER);
 
         assertEquals("ALREADY_MEMBER", result.get("$.errors[0].extensions.code"));
+    }
+
+    @Test
+    void submitTipUsesPutWithPathBodyAndToken() {
+        core.reply("PUT /api/groups/3/matches/101/tip", 200,
+                "{\"matchId\":101,\"home\":2,\"away\":1,\"updatedAt\":\"2026-10-17T12:01:13Z\"}");
+
+        var result = graphql.post("mutation { submitTip(groupId: 3, matchId: 101, home: 2, away: 1) { matchId home away updatedAt } }", BEARER);
+
+        assertEquals("101", result.get("$.data.submitTip.matchId"));
+        assertEquals(Integer.valueOf(2), result.get("$.data.submitTip.home"));
+        assertEquals("2026-10-17T12:01:13Z", result.get("$.data.submitTip.updatedAt"));
+        var call = core.calls().get(0);
+        assertEquals("PUT", call.method());
+        assertEquals(BEARER, call.authorization());
+        assertEquals(Integer.valueOf(2), JsonPath.read(call.body(), "$.home"));
+        assertEquals(Integer.valueOf(1), JsonPath.read(call.body(), "$.away"));
+    }
+
+    @Test
+    void submitTipAfterKickoffGivesTipLocked() {
+        core.reply("PUT /api/groups/3/matches/101/tip", 403,
+                "{\"error\":{\"code\":\"TIP_LOCKED\",\"message\":\"Das Spiel hat schon begonnen, der Tipp ist gesperrt.\"}}");
+
+        var result = graphql.post("mutation { submitTip(groupId: 3, matchId: 101, home: 2, away: 1) { matchId } }", BEARER);
+
+        assertEquals("TIP_LOCKED", result.get("$.errors[0].extensions.code"));
+        assertEquals("FORBIDDEN", result.get("$.errors[0].extensions.classification"));
+    }
+
+    @Test
+    void submitTipWithScoreOutOfRangeGivesInvalidScoreFromTheCore() {
+        core.reply("PUT /api/groups/3/matches/101/tip", 400,
+                "{\"error\":{\"code\":\"INVALID_SCORE\",\"message\":\"Tore müssen ganze Zahlen von 0 bis 20 sein.\"}}");
+
+        var result = graphql.post("mutation { submitTip(groupId: 3, matchId: 101, home: 21, away: 1) { matchId } }", BEARER);
+
+        assertEquals("INVALID_SCORE", result.get("$.errors[0].extensions.code"));
+    }
+
+    @Test
+    void submitTipWithoutTokenGivesUnauthorized() {
+        core.reply("PUT /api/groups/3/matches/101/tip", 401,
+                "{\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Bitte melde dich erneut an.\"}}");
+
+        var result = graphql.post("mutation { submitTip(groupId: 3, matchId: 101, home: 2, away: 1) { matchId } }", null);
+
+        assertEquals("UNAUTHORIZED", result.get("$.errors[0].extensions.code"));
+    }
+
+    @Test
+    void submitTipWithIdsThatAreNotNumbersNeverReachesTheCore() {
+        var result = graphql.post("mutation { submitTip(groupId: \"3/x\", matchId: 101, home: 2, away: 1) { matchId } }", BEARER);
+
+        assertEquals("VALIDATION_ERROR", result.get("$.errors[0].extensions.code"));
+        assertTrue(core.calls().isEmpty());
+    }
+
+    @Test
+    void fractionsAreRejectedByTheGraphqlTypeBeforeTheCoreIsCalled() {
+        var result = graphql.post("mutation { submitTip(groupId: 3, matchId: 101, home: 1.5, away: 1) { matchId } }", BEARER);
+
+        assertTrue(result.has("$.errors"));
+        assertTrue(core.calls().isEmpty());
     }
 }

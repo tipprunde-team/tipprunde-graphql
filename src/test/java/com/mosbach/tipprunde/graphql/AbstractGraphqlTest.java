@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import com.mosbach.tipprunde.graphql.core.RankingCache;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
@@ -26,11 +27,15 @@ abstract class AbstractGraphqlTest {
     @Autowired
     Environment environment;
 
+    @Autowired
+    RankingCache rankingCache;
+
     GraphqlTestSupport graphql;
 
     @BeforeEach
     void setUp() {
         core.reset();
+        rankingCache.clear();
         graphql = new GraphqlTestSupport(environment);
     }
 }
