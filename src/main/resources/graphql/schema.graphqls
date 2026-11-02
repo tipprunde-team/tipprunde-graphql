@@ -8,10 +8,11 @@ type Query {
   myGroups: [GroupSummary!]!
   group(id: ID!): Group
   invitePreview(code: String!): InvitePreview
+  # folgt im nächsten PR (Spieltag, Tipp, Rangliste):
   # ohne matchday: aktueller Spieltag
-  matchday(groupId: ID!, matchday: Int): Matchday
+  # matchday(groupId: ID!, matchday: Int): Matchday
   # ohne matchday: Gesamtrangliste
-  ranking(groupId: ID!, matchday: Int): [RankingEntry!]!
+  # ranking(groupId: ID!, matchday: Int): [RankingEntry!]!
   # tips(groupId: ID!, matchday: Int!): [MatchTips!]!   folgt nur, wenn US-23 umgesetzt wird
 }
 
@@ -20,7 +21,7 @@ type Mutation {
   login(email: String!, password: String!): TokenAnswer
   createGroup(name: String!): Group
   joinGroup(inviteCode: String!): GroupSummary
-  submitTip(groupId: ID!, matchId: ID!, home: Int!, away: Int!): Tip
+  # submitTip(groupId: ID!, matchId: ID!, home: Int!, away: Int!): Tip   folgt im nächsten PR
   # leaveGroup(groupId: ID!): Boolean   folgt nur, wenn US-12 umgesetzt wird
 }
 

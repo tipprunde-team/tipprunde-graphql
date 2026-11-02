@@ -43,11 +43,27 @@ Beispiel (Token aus `POST /api/auth` im Core):
 Es gibt keine Zugangsdaten. Das `JWT_SECRET` liegt nur im Core: Der GraphQL-Service reicht den Header `Authorization` unverändert weiter
 und prüft das Token nie selbst.
 
+## Abfragen und Mutationen
+
+| Typ | Name | Core-Aufruf |
+|---|---|---|
+| Query | `me` | `GET /api/users/me` |
+| Query | `myGroups` | `GET /api/groups` |
+| Query | `group(id)` | `GET /api/groups/{id}` |
+| Query | `invitePreview(code)` | `GET /api/invites/{code}` (ohne Token) |
+| Mutation | `register`, `login` | `POST /api/users`, `POST /api/auth` (ohne Token) |
+| Mutation | `createGroup`, `joinGroup` | `POST /api/groups`, `POST /api/groups/join` |
+
+Alle Regeln (Validierung, Tippsperre, Mitgliedschaft) bleiben im Core. Der GraphQL-Service reicht nur weiter und gibt die Fehler des Core zurück.
+IDs müssen Zahlen sein und werden geprüft, bevor sie in einen Pfad eingesetzt werden. Beispiele stehen in
+`docs/rest-client/graphql.http`.
+
 ## Fehler
 
 Fehler des Core kommen als GraphQL-Fehler mit demselben Code zurück (`extensions.code`, zum Beispiel `UNAUTHORIZED`, `NOT_A_MEMBER`, `TIP_LOCKED`).
 Ist der Core nicht erreichbar, lautet der Code `CORE_UNAVAILABLE`. Bei einer Antwort des Core ohne das bekannte Fehlerformat kommt `CORE_ERROR`.
-Abgelehnte Zugriffe (401, 403) stehen mit Feldname und Code im Log, nie mit Token oder Argumenten.
+Konflikte des Core (z. B. `EMAIL_TAKEN`, `ALREADY_MEMBER`) kommen als `BAD_REQUEST`, 401 als `UNAUTHORIZED`, 403 als `FORBIDDEN`, 404 als `NOT_FOUND`.
+Abgelehnte Zugriffe (401, 403) stehen mit Feldname und Code im Log, nie mit Token, Passwort oder Argumenten.
 
 ## Tests
 

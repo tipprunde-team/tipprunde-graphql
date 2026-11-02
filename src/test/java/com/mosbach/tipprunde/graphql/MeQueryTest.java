@@ -3,43 +3,10 @@ package com.mosbach.tipprunde.graphql;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 
-// Startet den GraphQL-Service gegen einen Platzhalter-Core: der Header Authorization geht unverändert durch,
-// Fehler des Core kommen mit demselben code zurück
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MeQueryTest {
-
-    static final MockCore core = new MockCore();
-
-    @DynamicPropertySource
-    static void coreUrl(DynamicPropertyRegistry registry) {
-        registry.add("app.core.base-url", core::baseUrl);
-        registry.add("app.core.timeout-seconds", () -> 3);
-    }
-
-    @AfterAll
-    static void stopCore() {
-        core.stop();
-    }
-
-    @Autowired
-    Environment environment;
-
-    GraphqlTestSupport graphql;
-
-    @BeforeEach
-    void setUp() {
-        core.reset();
-        graphql = new GraphqlTestSupport(environment);
-    }
+// Der Header Authorization geht unverändert zum Core, Fehler des Core kommen mit demselben code zurück
+class MeQueryTest extends AbstractGraphqlTest {
 
     @Test
     void meReturnsTheProfileFromTheCore() {

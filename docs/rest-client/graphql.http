@@ -1,0 +1,65 @@
+# GraphQL-Service testen (VS Code, REST Client), Postman-Fälle 41 (weitere folgen mit dem Spieltag- und Ranglisten-PR). Core-Service und GraphQL-Service müssen laufen.
+# Testkonto aus dem Core: Fall 1 und 2 legen es an und loggen es ein, alle weiteren Fälle benutzen das Token.
+# Für die Live-Umgebung nur die Zeile @baseUrl ändern (Heroku-URL des GraphQL-Service, ohne /graphql).
+
+@baseUrl = http://localhost:8081
+@coreUrl = http://localhost:8080/api
+
+### 1 Testkonto im Core anlegen (409 beim zweiten Mal ist in Ordnung)
+POST {{coreUrl}}/users
+Content-Type: application/json
+
+{ "email": "test-gql@example.de", "username": "TEST_gql", "password": "Geheim123" }
+
+### 2 Login per GraphQL, erwartet token, expiresAt und user
+# @name login
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  login(email: "test-gql@example.de", password: "Geheim123") {
+    token
+    expiresAt
+    user { id username }
+  }
+}
+
+### 3 Eigenes Profil
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+query { me { id username email isSystemAdmin } }
+
+### 4 Gruppe anlegen
+# @name createGroup
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+mutation { createGroup(name: "TEST GraphQL") { id name inviteCode role } }
+
+### 41 Eigene Gruppen ohne Token, erwartet Fehler mit extensions.code UNAUTHORIZED
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+query { myGroups { id name role memberCount myRank myPoints } }
+
+### 5 Einladungsvorschau ohne Token
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+query { invitePreview(code: "{{createGroup.response.body.data.createGroup.inviteCode}}") { groupId groupName memberCount } }
+
+### 6 Eigene Gruppen mit Token, erwartet die Gruppe aus Fall 4 mit role ADMIN und memberCount 1
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+query { myGroups { id name role memberCount myRank myPoints } }
