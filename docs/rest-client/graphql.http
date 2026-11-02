@@ -1,4 +1,4 @@
-# GraphQL-Service testen (VS Code, REST Client), Postman-Fälle 41 (weitere folgen mit dem Spieltag- und Ranglisten-PR). Core-Service und GraphQL-Service müssen laufen.
+# GraphQL-Service testen (VS Code, REST Client), Postman-Fälle 39 bis 42. Core-Service und GraphQL-Service müssen laufen.
 # Testkonto aus dem Core: Fall 1 und 2 legen es an und loggen es ein, alle weiteren Fälle benutzen das Token.
 # Für die Live-Umgebung nur die Zeile @baseUrl ändern (Heroku-URL des GraphQL-Service, ohne /graphql).
 
@@ -42,6 +42,43 @@ Authorization: Bearer {{login.response.body.data.login.token}}
 
 mutation { createGroup(name: "TEST GraphQL") { id name inviteCode role } }
 
+### 39 Spieltag mit Token, erwartet dieselben Daten wie REST (Fall 37)
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+query {
+  matchday(groupId: "{{createGroup.response.body.data.createGroup.id}}") {
+    matchday
+    serverTime
+    matches {
+      id
+      kickoff
+      status
+      locked
+      homeTeam { name shortName }
+      awayTeam { name shortName }
+      result { home away }
+      myTip { home away }
+      myPoints
+    }
+  }
+}
+
+### 40 Tipp nach Anstoß, erwartet Fehler mit extensions.code TIP_LOCKED
+# Spiel-ID aus Fall 39 eintragen, das Spiel muss schon begonnen haben (locked: true).
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+mutation {
+  submitTip(groupId: "{{createGroup.response.body.data.createGroup.id}}", matchId: "1", home: 2, away: 1) {
+    matchId home away updatedAt
+  }
+}
+
 ### 41 Eigene Gruppen ohne Token, erwartet Fehler mit extensions.code UNAUTHORIZED
 POST {{baseUrl}}/graphql
 Content-Type: application/json
@@ -49,17 +86,25 @@ X-REQUEST-TYPE: GraphQL
 
 query { myGroups { id name role memberCount myRank myPoints } }
 
+### 42a Rangliste, erster Aufruf (Cache-Fehlschlag, im Log: "Cache miss")
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+query { ranking(groupId: "{{createGroup.response.body.data.createGroup.id}}") { rank username points exactTips } }
+
+### 42b Rangliste, zweiter Aufruf innerhalb von 60 Sekunden, erwartet dieselbe Antwort, im Log: "Cache hit"
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{login.response.body.data.login.token}}
+
+query { ranking(groupId: "{{createGroup.response.body.data.createGroup.id}}") { rank username points exactTips } }
+
 ### 5 Einladungsvorschau ohne Token
 POST {{baseUrl}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 query { invitePreview(code: "{{createGroup.response.body.data.createGroup.inviteCode}}") { groupId groupName memberCount } }
-
-### 6 Eigene Gruppen mit Token, erwartet die Gruppe aus Fall 4 mit role ADMIN und memberCount 1
-POST {{baseUrl}}/graphql
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-Authorization: Bearer {{login.response.body.data.login.token}}
-
-query { myGroups { id name role memberCount myRank myPoints } }

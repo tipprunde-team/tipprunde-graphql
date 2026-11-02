@@ -36,6 +36,8 @@ Beispiel (Token aus `POST /api/auth` im Core):
 | `CORE_BASE_URL` | Adresse des Core-Service (auf Heroku die Live-URL, ohne `/api`) | `http://localhost:8080` |
 | `CORS_ALLOWED_ORIGINS` | erlaubte Origins der SPA, kommagetrennt, ohne Pfad und ohne Schrägstrich am Ende | `http://localhost:4200,http://127.0.0.1:4200` |
 | `CORE_TIMEOUT_SECONDS` | Zeitlimit für Antworten des Core (Eco-Dynos brauchen nach dem Schlafen einige Sekunden) | `20` |
+| `CACHE_TTL_SECONDS` | Gültigkeit der gecachten Rangliste in Sekunden | `60` |
+| `CACHE_MAX_SIZE` | höchste Zahl gecachter Ranglisten | `500` |
 | `GRAPHIQL_ENABLED` | GraphiQL-Oberfläche unter `/graphiql` | `true` |
 | `LOG_LEVEL` | Log-Level der Anwendung | `INFO` |
 | `PORT` | Port, auf Heroku vorgegeben | `8081` |
@@ -51,12 +53,23 @@ und prüft das Token nie selbst.
 | Query | `myGroups` | `GET /api/groups` |
 | Query | `group(id)` | `GET /api/groups/{id}` |
 | Query | `invitePreview(code)` | `GET /api/invites/{code}` (ohne Token) |
+| Query | `matchday(groupId, matchday)` | `GET /api/groups/{id}/matches` (ohne `matchday` der aktuelle Spieltag) |
+| Query | `ranking(groupId, matchday)` | `GET /api/groups/{id}/ranking` (ohne `matchday` die Gesamtrangliste) |
 | Mutation | `register`, `login` | `POST /api/users`, `POST /api/auth` (ohne Token) |
 | Mutation | `createGroup`, `joinGroup` | `POST /api/groups`, `POST /api/groups/join` |
+| Mutation | `submitTip` | `PUT /api/groups/{id}/matches/{matchId}/tip` |
 
 Alle Regeln (Validierung, Tippsperre, Mitgliedschaft) bleiben im Core. Der GraphQL-Service reicht nur weiter und gibt die Fehler des Core zurück.
-IDs müssen Zahlen sein und werden geprüft, bevor sie in einen Pfad eingesetzt werden. Beispiele stehen in
+IDs müssen Zahlen sein und werden geprüft, bevor sie in einen Pfad eingesetzt werden. Beispiele mit den Postman-Fällen 39 bis 42 stehen in
 `docs/rest-client/graphql.http`.
+
+## Cache
+
+Gecacht werden nur nutzerunabhängige Daten: die Rangliste einer Gruppe (Schlüssel: Gruppe und Spieltag), 60 Sekunden (Caffeine). Eigene Tipps werden nie
+gecacht, deshalb ist auch der Spieltag (er enthält `myTip`) nicht im Cache. Vor **jedem** Cache-Zugriff prüft der Core Token und Mitgliedschaft
+(`GET /api/groups/{id}`). Bei 401, 403 oder 404 kommt der Fehler zurück, und es wird nichts aus dem Cache geliefert. Treffer und Fehlschläge stehen im Log
+(`Cache hit: key=ranking:3:total`, `Cache miss: ...`). Fehler des Core werden nicht gecacht. Gültigkeit und Größe lassen sich mit `CACHE_TTL_SECONDS`
+und `CACHE_MAX_SIZE` ändern.
 
 ## Fehler
 
