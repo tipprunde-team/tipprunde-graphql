@@ -21,6 +21,8 @@ dependencies {
 	// WebClient (nicht blockierend) für den Aufruf des Core-Service
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	// Cache für nutzerunabhängige Antworten (Rangliste), 60 Sekunden
+	implementation 'com.github.ben-manes.caffeine:caffeine'
 	testImplementation 'org.springframework.boot:spring-boot-starter-graphql-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
