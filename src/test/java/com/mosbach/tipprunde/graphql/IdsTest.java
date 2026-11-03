@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.mosbach.tipprunde.graphql.core.CoreApiException;
 import com.mosbach.tipprunde.graphql.core.Ids;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 class IdsTest {
 
     @Test

@@ -22,6 +22,7 @@ import com.mosbach.tipprunde.graphql.model.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Aufrufe des Core-Service. Der Header Authorization wird unverändert weitergereicht, geprüft wird er nur im Core.
 @Component
 public class CoreClient {

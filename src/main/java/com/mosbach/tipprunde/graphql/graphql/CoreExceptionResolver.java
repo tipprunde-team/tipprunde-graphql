@@ -16,6 +16,7 @@ import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Gibt Fehler des Core mit demselben code als GraphQL-Fehler zurück (extensions.code), z. B. TIP_LOCKED
 @Component
 public class CoreExceptionResolver extends DataFetcherExceptionResolverAdapter {

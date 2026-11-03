@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 
 import com.jayway.jsonpath.JsonPath;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Sendet GraphQL-Anfragen per HTTP an den laufenden Testserver und liest die Antwort mit JsonPath
 public class GraphqlTestSupport {
 

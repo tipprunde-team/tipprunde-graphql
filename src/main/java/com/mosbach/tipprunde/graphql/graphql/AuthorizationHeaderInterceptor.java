@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Legt den Header Authorization in den GraphQL-Kontext, damit ihn die Resolver an den Core weiterreichen können
 @Component
 public class AuthorizationHeaderInterceptor implements WebGraphQlInterceptor {

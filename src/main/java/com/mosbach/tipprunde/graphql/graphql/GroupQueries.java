@@ -15,6 +15,7 @@ import com.mosbach.tipprunde.graphql.model.InvitePreview;
 
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Gruppen: myGroups, group, invitePreview. Mitgliedschaft und Rolle prüft allein der Core.
 @Controller
 public class GroupQueries {

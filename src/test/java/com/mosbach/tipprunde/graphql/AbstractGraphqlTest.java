@@ -8,6 +8,7 @@ import com.mosbach.tipprunde.graphql.core.RankingCache;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Startet den GraphQL-Service gegen einen gemeinsamen Platzhalter-Core. Alle Testklassen teilen sich einen Kontext.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 abstract class AbstractGraphqlTest {

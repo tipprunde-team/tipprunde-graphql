@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 class GroupQueriesTest extends AbstractGraphqlTest {
 
     private static final String BEARER = "Bearer abc.def.ghi";

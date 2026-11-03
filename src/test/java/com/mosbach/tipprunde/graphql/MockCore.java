@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Kleiner Platzhalter für den Core-Service (JDK-HttpServer), damit die Tests ohne Core und ohne Datenbank laufen.
 // Antworten werden je "METHODE /pfad" festgelegt, alle Aufrufe werden mit Header und Body aufgezeichnet.
 public class MockCore {

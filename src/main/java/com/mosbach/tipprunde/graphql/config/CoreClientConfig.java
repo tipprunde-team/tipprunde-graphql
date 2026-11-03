@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.netty.http.client.HttpClient;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // WebClient für den Core-Service: nicht blockierend, mit Zeitlimit
 @Configuration
 public class CoreClientConfig {

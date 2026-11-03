@@ -1,5 +1,6 @@
 package com.mosbach.tipprunde.graphql.core;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Prüft IDs aus GraphQL-Argumenten, bevor sie in einen Pfad des Core eingesetzt werden
 public final class Ids {
 

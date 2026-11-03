@@ -17,6 +17,7 @@ import com.mosbach.tipprunde.graphql.model.User;
 
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Mutationen: alle Regeln (Validierung, Sperre, Mitgliedschaft) bleiben im Core, hier wird nur weitergereicht
 @Controller
 public class MutationController {

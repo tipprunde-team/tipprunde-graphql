@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Der Header Authorization geht unverändert zum Core, Fehler des Core kommen mit demselben code zurück
 class MeQueryTest extends AbstractGraphqlTest {
 
