@@ -17,6 +17,7 @@ import com.mosbach.tipprunde.graphql.model.RankingEntry;
 
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Cache für die Rangliste einer Gruppe. Gecacht werden nur nutzerunabhängige Daten (die Rangliste ist für alle Mitglieder gleich),
 // der Schlüssel ist Gruppe und Spieltag. Eigene Tipps werden nie gecacht. Treffer und Fehlschläge stehen im Log.
 @Component

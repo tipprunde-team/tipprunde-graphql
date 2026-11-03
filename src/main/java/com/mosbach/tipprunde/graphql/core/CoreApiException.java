@@ -1,5 +1,6 @@
 package com.mosbach.tipprunde.graphql.core;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Fehler des Core-Service im Format {"error":{"code","message"}}, mit dem HTTP-Status der Antwort
 public class CoreApiException extends RuntimeException {
 

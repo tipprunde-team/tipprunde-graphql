@@ -1,5 +1,6 @@
 package com.mosbach.tipprunde.graphql.model;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Ein Spiel des Spieltags mit gesperrt-Status und eigenem Tipp (myTip und myPoints sind null ohne Tipp bzw. ohne Wertung)
 public record MatchEntry(
         long id,

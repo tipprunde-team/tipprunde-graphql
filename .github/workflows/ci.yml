@@ -1,3 +1,4 @@
+# KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 name: CI
 
 # läuft bei Push auf main und bei jedem PR auf main

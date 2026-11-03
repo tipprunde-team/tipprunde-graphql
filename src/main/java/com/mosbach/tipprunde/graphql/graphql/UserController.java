@@ -9,6 +9,7 @@ import com.mosbach.tipprunde.graphql.model.User;
 
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Eigenes Profil: me
 @Controller
 public class UserController {

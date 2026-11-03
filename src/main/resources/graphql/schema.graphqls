@@ -1,3 +1,4 @@
+# KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 # Vertrag zwischen GraphQL-Service und SPA. Gleicher Funktionsumfang wie die REST-API des Core-Service.
 # IDs sind Zahlen als ID, Zeitangaben sind ISO-8601-Texte in UTC (z. B. 2026-10-24T13:30:00Z).
 # Fehler des Core kommen als GraphQL-Fehler mit extensions.code (z. B. UNAUTHORIZED, NOT_A_MEMBER, TIP_LOCKED).

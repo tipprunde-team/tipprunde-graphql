@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.jayway.jsonpath.JsonPath;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 class MutationsTest extends AbstractGraphqlTest {
 
     private static final String BEARER = "Bearer abc.def.ghi";

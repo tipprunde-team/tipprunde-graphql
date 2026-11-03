@@ -22,6 +22,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Gültigkeit, Schlüssel und Log des Caches, ohne Core und ohne zu warten (eigene Uhr)
 class RankingCacheTest {
 

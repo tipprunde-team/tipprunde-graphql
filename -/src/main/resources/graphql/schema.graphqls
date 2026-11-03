@@ -1,0 +1,113 @@
+# Vertrag zwischen GraphQL-Service und SPA. Gleicher Funktionsumfang wie die REST-API des Core-Service.
+# IDs sind Zahlen als ID, Zeitangaben sind ISO-8601-Texte in UTC (z. B. 2026-10-24T13:30:00Z).
+# Fehler des Core kommen als GraphQL-Fehler mit extensions.code (z. B. UNAUTHORIZED, NOT_A_MEMBER, TIP_LOCKED).
+# Der JWT steht wie bei REST im Header Authorization: Bearer <token>.
+
+type Query {
+  me: User
+  myGroups: [GroupSummary!]!
+  group(id: ID!): Group
+  invitePreview(code: String!): InvitePreview
+  # ohne matchday: aktueller Spieltag
+  matchday(groupId: ID!, matchday: Int): Matchday
+  # ohne matchday: Gesamtrangliste
+  ranking(groupId: ID!, matchday: Int): [RankingEntry!]!
+  # tips(groupId: ID!, matchday: Int!): [MatchTips!]!   folgt nur, wenn US-23 umgesetzt wird
+}
+
+type Mutation {
+  register(email: String!, username: String!, password: String!): User
+  login(email: String!, password: String!): TokenAnswer
+  createGroup(name: String!): Group
+  joinGroup(inviteCode: String!): GroupSummary
+  submitTip(groupId: ID!, matchId: ID!, home: Int!, away: Int!): Tip
+  # leaveGroup(groupId: ID!): Boolean   folgt nur, wenn US-12 umgesetzt wird
+}
+
+type User {
+  id: ID!
+  email: String
+  username: String!
+  isSystemAdmin: Boolean
+}
+
+type TokenAnswer {
+  token: String!
+  expiresAt: String!
+  user: User!
+}
+
+type GroupSummary {
+  id: ID!
+  name: String!
+  role: String!
+  memberCount: Int!
+  myRank: Int!
+  myPoints: Int!
+}
+
+# inviteCode und members nur, wenn der Core sie liefert (inviteCode nur für Admins)
+type Group {
+  id: ID!
+  name: String!
+  role: String
+  inviteCode: String
+  members: [Member!]
+}
+
+type Member {
+  userId: ID!
+  username: String!
+  role: String!
+  joinedAt: String!
+}
+
+type InvitePreview {
+  groupId: ID!
+  groupName: String!
+  memberCount: Int!
+}
+
+type Matchday {
+  matchday: Int!
+  serverTime: String!
+  matches: [MatchEntry!]!
+}
+
+type MatchEntry {
+  id: ID!
+  kickoff: String!
+  status: String!
+  locked: Boolean!
+  homeTeam: Team!
+  awayTeam: Team!
+  result: Score
+  myTip: Score
+  myPoints: Int
+}
+
+type Team {
+  name: String!
+  shortName: String
+  crest: String
+}
+
+type Score {
+  home: Int!
+  away: Int!
+}
+
+type RankingEntry {
+  rank: Int!
+  userId: ID!
+  username: String!
+  points: Int!
+  exactTips: Int!
+}
+
+type Tip {
+  matchId: ID!
+  home: Int!
+  away: Int!
+  updatedAt: String!
+}

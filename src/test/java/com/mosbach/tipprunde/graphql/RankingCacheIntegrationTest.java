@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Cache im Zusammenspiel mit Token und Mitgliedschaft: gecachte Daten gehen nie an Nichtmitglieder
 class RankingCacheIntegrationTest extends AbstractGraphqlTest {
 

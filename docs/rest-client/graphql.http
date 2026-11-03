@@ -1,3 +1,4 @@
+# KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 # GraphQL-Service testen (VS Code, REST Client), Postman-Fälle 39 bis 42. Core-Service und GraphQL-Service müssen laufen.
 # Testkonto aus dem Core: Fall 1 und 2 legen es an und loggen es ein, alle weiteren Fälle benutzen das Token.
 # Für die Live-Umgebung nur die Zeile @baseUrl ändern (Heroku-URL des GraphQL-Service, ohne /graphql).

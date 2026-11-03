@@ -15,6 +15,7 @@ import com.mosbach.tipprunde.graphql.model.RankingEntry;
 
 import reactor.core.publisher.Mono;
 
+// KI-Log MA-15 "Bereite den GraphQL-Service vor und teile ihn nach der Reihenfolge der SPA auf."
 // Spieltag und Rangliste einer Gruppe. Der Spieltag ist ohne Angabe der aktuelle und wird nicht gecacht, weil er den eigenen Tipp enthält.
 @Controller
 public class MatchQueries {
